@@ -15,22 +15,22 @@ class neuralNetwork:
 
 		#learning rate
 		self.lr =learningrate
-		self.layer2weights= self.randomValues(784, 100)  #set the weights for the input -> hidden layer
-		self.layer3weights= self.randomValues(100, 10) 	 #set the weights for the hidden -> output layer
+		self.layer2weights= self.randomValues(inputnodes, hiddennodes)  #set the weights for the input -> hidden layer
+		self.layer3weights= self.randomValues(hiddennodes, outputnodes) 	 #set the weights for the hidden -> output layer
 
 		pass
 
-	def train(self, inputs, l2w, l3w, label):
+	def train(self, inputs, label):
 		#The two matrices have to be dot product compatible
 		#Cols of matrix 1 should be equal to rows of matrix 2
-		input2hidden = np.dot(l2w , inputs) #input layer and first set of weights 
+		input2hidden = np.dot(self.layer2weights , inputs) #input layer and first set of weights 
 		#print(str("input and weights dot: "))
 		#print(input2hidden)
 		hiddenVal = self.sigmoid(input2hidden) #value of hidden layer
 		#print(str("Sigmoid layer 2"))
 		#print(hiddenVal)
 
-		hiddentoOut = np.dot(l3w, hiddenVal) #hidden layer and 2nd set of weights
+		hiddentoOut = np.dot(self.layer3weights, hiddenVal) #hidden layer and 2nd set of weights
 		#print(str("hiddenOUt dot: "))
 		#print(hiddentoOut)
 		layer3Val = self.sigmoid(hiddentoOut) # output
@@ -79,6 +79,7 @@ class neuralNetwork:
 		return sigmoidArr #return array
 
 
+	#normalize the array of values to be able to do functions
 	def normalizeVales(self, value):
 		minVal = np.amin(value)
 		maxVal = np.amax(value)
@@ -89,6 +90,7 @@ class neuralNetwork:
 			i = i + 1
 		return y
 
+	#build the array of the label for 10 values where label index is set to .99 rest is .1
 	def buildLabArr(self, label):
 		myList=[]
 		for i in range(10):
@@ -98,10 +100,9 @@ class neuralNetwork:
 				myList.append(.1)
 		print(myList)
 		return myList
-	# print("after normalizing")
-	# print(valArr)
+
 def main():
-	nn = neuralNetwork("", "","","" )  #initialize neural network
+	nn = neuralNetwork(784,100,10,"" )  #initialize neural network
 	#Read vectors from file: first value is label and rest is vector in row 
 	#image data converted to RGB value its a 28x28 matrix - then flattened 1D vector 784 pixels for each label 
 	# input layer will ahve 784 nodes
@@ -113,7 +114,7 @@ def main():
 	#layer2weights= nn.randomValues(784, 100)
 	#layer3weights= nn.randomValues(100, 10)
 	i = 0
-	while i < 1:
+	while i < 3:
 		normalVals = nn.normalizeVales(values[i][1:])
 		#print(normalVals)
 		label = values[i][0]
@@ -121,7 +122,7 @@ def main():
 		#inputVal = values[0][1:]
 		#print(values[0][1:])
 		#print(fullWeights)
-		nn.train(normalVals, nn.layer2weights, nn.layer3weights, labArr) 
+		nn.train(normalVals, labArr) 
 		i = i + 1
 
 
