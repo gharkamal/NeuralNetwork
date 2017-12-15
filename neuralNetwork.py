@@ -15,73 +15,68 @@ class neuralNetwork:
 
 		#learning rate
 		self.lr =learningrate
+		self.layer2weights= self.randomValues(784, 100)  #set the weights for the input -> hidden layer
+		self.layer3weights= self.randomValues(100, 10) 	 #set the weights for the hidden -> output layer
+
 		pass
 
 	def train(self, inputs, l2w, l3w, label):
-		input2hidden = np.dot(l2w , inputs)
-		print(str("input and weights dot: "))
+		#The two matrices have to be dot product compatible
+		#Cols of matrix 1 should be equal to rows of matrix 2
+		input2hidden = np.dot(l2w , inputs) #input layer and first set of weights 
+		#print(str("input and weights dot: "))
 		#print(input2hidden)
-		hiddenVal = self.sigmoid(input2hidden)
+		hiddenVal = self.sigmoid(input2hidden) #value of hidden layer
 		#print(str("Sigmoid layer 2"))
 		#print(hiddenVal)
 
-		hiddentoOut = np.dot(l3w, hiddenVal)
+		hiddentoOut = np.dot(l3w, hiddenVal) #hidden layer and 2nd set of weights
 		#print(str("hiddenOUt dot: "))
 		#print(hiddentoOut)
-		layer3Val = self.sigmoid(hiddentoOut)
+		layer3Val = self.sigmoid(hiddentoOut) # output
 		
-		print(layer3Val)
+		#print(layer3Val)
+		#delta is the error (label and ouput value is used)
 		delta = []
 		for i, j in zip(label, layer3Val):
 			delta.append(i - j)
+		print(delta)
 		pass
 
 	def query():
 		pass
 
+
 	def getValues(self):
-		filename ="mnist_train.csv"
-		#pd.read_csv(filename)
-		values = [];
+		filename ="temp/mnist_train.csv"
+		values = []; #all the values are returned. File is parsed and split
 		if not os.path.isfile(filename):
 		    print('File does not exist.')
 		else:  
 		    with open(filename) as textFile:
 		    	lines = [line.split(",") for line in textFile]
 		    	values = lines;
-		    	#print(int(lines[1][10]))
-		#randomly generated weights
-
-		#pop the label
-		# p = 0
-		# while p < len(values):
-		# 	values[p].pop(0)
-		# 	p = p + 1
 		values = np.int_(values)
 		return values;
 
-
+	#build random values using x and y for matrix
 	def randomValues(self, x, y):
 		fullWeights =[]
 		i = 0
-		#The two matrices have to be dot product compatible
-		#Cols of matrix 1 should be equal to rows of matrix 2
 		while i < y:
 			fullWeights.append(np.random.uniform(low=-1.0, high=1.0, size=x))
-			#print(fullWeights)
 			i = i + 1
 		return fullWeights
 
-
+	#sigmoid function
 	def sigmoid(self, x):
 		sigmoidArr = []
 		y = 0
+		#for every value in the array after dot product 
 		while y < len(x):
-			#print(str("Before Sigmoid: ") + str(weightxvalues[y]))
 			sigmoidArr.append(1 / (1 + math.exp(-x[y]))) 
-			#print(str(sigmoidArr[y]))
 			y = y + 1
-		return sigmoidArr
+		return sigmoidArr #return array
 
 
 	def normalizeVales(self, value):
@@ -106,7 +101,7 @@ class neuralNetwork:
 	# print("after normalizing")
 	# print(valArr)
 def main():
-	nn = neuralNetwork("", "","","" )
+	nn = neuralNetwork("", "","","" )  #initialize neural network
 	#Read vectors from file: first value is label and rest is vector in row 
 	#image data converted to RGB value its a 28x28 matrix - then flattened 1D vector 784 pixels for each label 
 	# input layer will ahve 784 nodes
@@ -115,8 +110,8 @@ def main():
 
 	#generate random weihts tice once for in to hidden and hiden out
 	values =  nn.getValues()
-	layer2weights= nn.randomValues(784, 100)
-	layer3weights= nn.randomValues(100, 10)
+	#layer2weights= nn.randomValues(784, 100)
+	#layer3weights= nn.randomValues(100, 10)
 	i = 0
 	while i < 1:
 		normalVals = nn.normalizeVales(values[i][1:])
@@ -126,7 +121,7 @@ def main():
 		#inputVal = values[0][1:]
 		#print(values[0][1:])
 		#print(fullWeights)
-		nn.train(normalVals, layer2weights, layer3weights, labArr) 
+		nn.train(normalVals, nn.layer2weights, nn.layer3weights, labArr) 
 		i = i + 1
 
 
